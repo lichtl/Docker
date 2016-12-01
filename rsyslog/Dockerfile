@@ -7,9 +7,11 @@ RUN apt-get update -qq && apt-get install -y \
 
 EXPOSE 514
 
-RUN sed 's/#$ModLoad imudp/$ModLoad imudp/' -i /etc/rsyslog.conf
-RUN sed 's/#$UDPServerRun 514/$UDPServerRun 514/' -i /etc/rsyslog.conf
-RUN sed 's/#$ModLoad imtcp/$ModLoad imtcp/' -i /etc/rsyslog.conf
-RUN sed 's/#$InputTCPServerRun 514/$InputTCPServerRun 514/' -i /etc/rsyslog.conf
+RUN sed 's/#module(load="imudp")/module(load="imudp")/' -i /etc/rsyslog.conf
+RUN sed 's/#input(type="imudp" port="514")/input(type="imudp" port="514")/' -i /etc/rsyslog.conf
+RUN sed 's/#module(load="imtcp")/module(load="imtcp")/' -i /etc/rsyslog.conf
+RUN sed 's/#input(type="imtcp" port="514")/#input(type="imtcp" port="514")/' -i /etc/rsyslog.conf
+
+RUN echo "*.* /var/log/remote.log" > /etc/rsyslog.d/100-rsyslogd.conf
 
 ENTRYPOINT ["/usr/sbin/rsyslogd", "-n"]
